@@ -1,56 +1,79 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
   <meta charset="UTF-8">
   <title>響應式五子棋</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      /* 靠上 */
       height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
       background-color: #f5f5f5;
+      overflow: hidden;
+      /* 防止滾動 */
+      padding-top: 20px;
     }
+
     h1 {
       margin-bottom: 10px;
     }
+
     #status {
+      font-size: 20px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 10px;
       margin-bottom: 10px;
-      font-size: 18px;
+      color: white;
+      background-color: black;
+      /* 預設黑棋先 */
     }
+
     #board-container {
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100vw;
       height: 80vh;
-      max-width: 90vmin;  /* 讓棋盤適應螢幕大小，保持正方形 */
+      max-width: 90vmin;
       max-height: 90vmin;
     }
+
     #board {
       display: grid;
       background-color: #333;
-      aspect-ratio: 1 / 1; /* 確保棋盤永遠是正方形 */
+      aspect-ratio: 1 / 1;
       width: 100%;
       height: 100%;
     }
+
     .cell {
       background-color: #f0f0f0;
       display: flex;
       justify-content: center;
       align-items: center;
       border: 1px solid #999;
-	  cursor: pointer;
+      cursor: pointer;
     }
+
     .player1 {
       background-color: black;
       border-radius: 50%;
       width: 80%;
       height: 80%;
     }
+
     .player2 {
       background-color: white;
       border-radius: 50%;
@@ -58,26 +81,50 @@
       height: 80%;
       border: 1px solid #333;
     }
+
+    #winner-message {
+      font-size: 24px;
+      font-weight: bold;
+      color: red;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .restart-button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .restart-button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
+
 <body>
   <h1>響應式五子棋</h1>
   <div id="status">目前玩家: 1 (黑棋)</div>
   <div id="board-container">
     <div id="board"></div>
   </div>
+  <div id="winner-message"></div>
+  <button class="restart-button" onclick="restartGame()">重新開始</button>
 
   <script>
     const boardSize = 15;
-    let board = [];
+    let board = Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
     let currentPlayer = 1;
     const boardElement = document.getElementById('board');
     const statusElement = document.getElementById('status');
-
-    // 初始化棋盤陣列
-    for (let i = 0; i < boardSize; i++) {
-      board[i] = Array(boardSize).fill(0);
-    }
+    const winnerMessage = document.getElementById('winner-message');
+    const restartButton = document.querySelector('.restart-button');
 
     // 渲染棋盤
     function renderBoard() {
@@ -92,6 +139,7 @@
           cell.dataset.row = i;
           cell.dataset.col = j;
           cell.addEventListener('click', handleCellClick);
+
           if (board[i][j] === 1) {
             const piece = document.createElement('div');
             piece.classList.add('player1');
@@ -116,13 +164,18 @@
       renderBoard();
 
       if (checkWin(row, col, currentPlayer)) {
-        statusElement.textContent = `玩家 ${currentPlayer} 獲勝！`;
+        statusElement.textContent = `🎉 玩家 ${currentPlayer} 獲勝！`;
+        statusElement.style.backgroundColor = currentPlayer === 1 ? 'black' : 'red';
+        winnerMessage.textContent = `🏆 玩家 ${currentPlayer} (${currentPlayer === 1 ? '黑棋' : '白棋'}) 獲勝！`;
+        winnerMessage.style.display = 'block';
         boardElement.style.pointerEvents = 'none';
+        restartButton.style.display = 'block';
         return;
       }
 
       currentPlayer = currentPlayer === 1 ? 2 : 1;
       statusElement.textContent = `目前玩家: ${currentPlayer} ${currentPlayer === 1 ? '(黑棋)' : '(白棋)'}`;
+      statusElement.style.backgroundColor = currentPlayer === 1 ? 'black' : 'red';
     }
 
     // 判斷勝利
@@ -144,9 +197,7 @@
 
     // 計算某方向連續棋子數
     function countDirection(row, col, dr, dc, player) {
-      let r = row + dr;
-      let c = col + dc;
-      let count = 0;
+      let count = 0, r = row + dr, c = col + dc;
       while (r >= 0 && r < boardSize && c >= 0 && c < boardSize && board[r][c] === player) {
         count++;
         r += dr;
@@ -155,17 +206,20 @@
       return count;
     }
 
-    // 調整棋盤大小
-    function adjustBoardSize() {
-      let minSize = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.8);
-      boardElement.style.width = `${minSize}px`;
-      boardElement.style.height = `${minSize}px`;
+    // 重新開始遊戲
+    function restartGame() {
+      board = Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
+      currentPlayer = 1;
+      boardElement.style.pointerEvents = 'auto';
+      winnerMessage.style.display = 'none';
+      restartButton.style.display = 'none';
+      statusElement.textContent = `目前玩家: 1 (黑棋)`;
+      statusElement.style.backgroundColor = 'black';
+      renderBoard();
     }
 
-    window.addEventListener('resize', adjustBoardSize);
-
     renderBoard();
-    adjustBoardSize();
   </script>
 </body>
+
 </html>
