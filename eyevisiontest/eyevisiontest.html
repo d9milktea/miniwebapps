@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>視力檢查</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f3f3f3;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .letter-container {
+      margin-bottom: 20px;
+      position: relative;
+      /* 父容器設為relative，方便絕對定位 */
+    }
+
+    .feedback-box {
+      position: absolute;
+      top: -30px;
+      /* 讓反饋顯示在字母上方 */
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 18px;
+      font-weight: bold;
+      color: green;
+      /* 默認顏色設置為綠色 */
+      min-width: 60px;
+      /* 保證即使沒有文字也有最小寬度 */
+      height: 20px;
+      /* 固定高度 */
+    }
+
+    .letter-box {
+      width: 200px;
+      /* 固定的寬度 */
+      height: 200px;
+      /* 固定的高度 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #000;
+      /* 外圍的邊框 */
+      margin: 0 auto;
+    }
+
+    .letter {
+      font-weight: bold;
+      text-align: center;
+      transition: font-size 0.3s;
+      /* 平滑過渡效果 */
+    }
+
+    .options {
+      margin-bottom: 20px;
+    }
+
+    button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+    }
+
+    button.selected {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .font-size-buttons button {
+      font-size: 18px;
+      padding: 10px;
+      margin: 5px;
+    }
+
+    .font-size-buttons {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="letter-container">
+      <!-- 固定位置的反饋訊息區域 -->
+      <div id="feedback" class="feedback-box"></div>
+      <div class="letter-box">
+        <div class="letter" id="letter">E</div>
+      </div>
+    </div>
+    <div class="options">
+      <button onclick="checkDirection('up')">↑</button>
+      <button onclick="checkDirection('down')">↓</button>
+      <button onclick="checkDirection('left')">←</button>
+      <button onclick="checkDirection('right')">→</button>
+    </div>
+
+    <!-- 字體大小選擇按鈕 -->
+    <div class="font-size-buttons">
+      <button id="btn-0.1" onclick="changeFontSize(0.1)">0.1</button>
+      <button id="btn-0.2" onclick="changeFontSize(0.2)">0.2</button>
+      <button id="btn-0.3" onclick="changeFontSize(0.3)">0.3</button>
+      <button id="btn-0.4" onclick="changeFontSize(0.4)">0.4</button>
+      <button id="btn-0.5" onclick="changeFontSize(0.5)">0.5</button>
+      <button id="btn-0.6" onclick="changeFontSize(0.6)">0.6</button>
+      <button id="btn-0.7" onclick="changeFontSize(0.7)">0.7</button>
+      <button id="btn-0.8" onclick="changeFontSize(0.8)">0.8</button>
+      <button id="btn-0.9" onclick="changeFontSize(0.9)">0.9</button>
+      <button id="btn-1.0" onclick="changeFontSize(1.0)" class="selected">1.0</button>
+      <button id="btn-1.1" onclick="changeFontSize(1.1)">1.1</button>
+      <button id="btn-1.2" onclick="changeFontSize(1.2)">1.2</button>
+    </div>
+
+
+    <button onclick="nextLetter()">下一個字母</button>
+  </div>
+
+  <script>
+    const directions = ['up', 'down', 'left', 'right'];
+    const letters = ['E', 'C'];
+    let currentDirection = '';
+    let currentLetter = '';
+    let currentFontSize = 1.0;  // 初始字體大小設定為1.0
+
+    function getRandomDirection() {
+      const randomIndex = Math.floor(Math.random() * directions.length);
+      return directions[randomIndex];
+    }
+
+    function getRandomLetter() {
+      const randomIndex = Math.floor(Math.random() * letters.length);
+      return letters[randomIndex];
+    }
+
+    function nextLetter() {
+      // 隨機選擇字母和方向
+      currentLetter = getRandomLetter();
+      currentDirection = getRandomDirection();
+
+      // 顯示字母並旋轉到隨機方向
+      const letterElement = document.getElementById('letter');
+      letterElement.textContent = currentLetter;
+
+      // 根據選擇的字體大小來調整字母的大小
+      // letterElement.style.fontSize = `${currentFontSize * 100}px`;  // 字體大小從0.1到1.2，換算成像素
+      letterElement.style.fontSize = `${currentFontSize * 13}em`;  // 字體大小從0.1到1.2，換算成像素
+
+      // 重置方向
+      letterElement.style.transform = '';
+
+      if (currentLetter === 'E') {
+        // 根據隨機方向旋轉字母 E
+        if (currentDirection === 'up') {
+          letterElement.style.transform = 'rotate(-90deg)';
+        } else if (currentDirection === 'down') {
+          letterElement.style.transform = 'rotate(90deg)';
+        } else if (currentDirection === 'left') {
+          letterElement.style.transform = 'rotate(180deg)';
+        } else if (currentDirection === 'right') {
+          letterElement.style.transform = 'rotate(0deg)';
+        }
+      } else if (currentLetter === 'C') {
+        // 根據隨機方向旋轉字母 C
+        if (currentDirection === 'up') {
+          letterElement.style.transform = 'rotate(-90deg)';
+        } else if (currentDirection === 'down') {
+          letterElement.style.transform = 'rotate(90deg)';
+        } else if (currentDirection === 'left') {
+          letterElement.style.transform = 'rotate(180deg)';
+        } else if (currentDirection === 'right') {
+          letterElement.style.transform = 'rotate(0deg)';
+        }
+      }
+
+      // 清空反饋
+      document.getElementById('feedback').textContent = '';
+    }
+
+    function checkDirection(selectedDirection) {
+      const feedbackElement = document.getElementById('feedback');
+
+      if (selectedDirection === currentDirection) {
+        feedbackElement.textContent = '正確！';
+        feedbackElement.style.color = 'green';
+      } else {
+        feedbackElement.textContent = '錯誤，試試看下一個！';
+        feedbackElement.style.color = 'red';
+      }
+    }
+
+    // 更新字體大小
+    function changeFontSize(size) {
+      const buttons = document.querySelectorAll('.font-size-buttons button');
+      // 移除所有按鈕的選中樣式
+      buttons.forEach(button => button.classList.remove('selected'));
+
+      // 確保 size 是字串，並保證有小數點
+      let sizeString = size.toFixed(1);  // 使用 toFixed(1) 保證小數位數為1
+      const buttonId = `btn-${sizeString}`;  // 生成與 id 對應的字串
+
+      // 確保選中正確的按鈕
+      const selectedButton = document.getElementById(buttonId);
+      if (selectedButton) {
+        selectedButton.classList.add('selected');
+      } else {
+        console.error(`Button with ID ${buttonId} not found.`);
+      }
+
+      currentFontSize = size;
+      nextLetter();  // 更新字體大小後重新顯示字母
+    }
+
+
+    // 初次啟動時顯示一個隨機字母
+    nextLetter();
+  </script>
+</body>
+
+</html>

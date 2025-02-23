@@ -6,8 +6,8 @@
 
 | 🔗 應用名稱         | 📄 連結 |
 |------------------|------------|
-| 👁 **視力測驗**  | [eyevisiontest.html](eyevisiontest.html) |
-| ⚫ **五子棋**    | [gomoku.html](gomoku.html) |
+| 👁 **視力測驗**  | [eyevisiontest.html](eyevisiontest/eyevisiontest.html) |
+| ⚫ **五子棋**    | [gomoku.html](gomoku/gomoku.html) |
 
 ## 🚀 如何使用
 
