@@ -18,8 +18,8 @@
       grid-template-rows: repeat(8, 1fr);
       gap: 2px;
       margin: 0 auto;
-      width: 80vh;    /* 自動依據視窗高度 90% */
-      height: 80vh;   /* 保持正方形 */
+      width: min(85vw, 85vh);   /* 根據寬高較小的值 */
+      height: min(85vw, 85vh);  /* 保持正方形 */
     }
     .cell {
       background: green;
