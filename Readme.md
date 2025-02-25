@@ -8,6 +8,7 @@
 |------------------|------------|
 | 👁 **視力測驗**  | [eyevisiontest.html](eyevisiontest/eyevisiontest.html) |
 | ⚫ **五子棋**    | [gomoku.html](gomoku/gomoku.html) |
+| ⚫ **翻轉棋/黑白棋**    | [reversi.html](reversi/reversi.html) |
 
 ## 🚀 如何使用
 
