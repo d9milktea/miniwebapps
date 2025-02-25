@@ -1,71 +1,64 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>黑白棋遊戲</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-
-        #menu {
-            margin-bottom: 20px;
-        }
-
-        #board {
-            display: grid;
-            grid-template-columns: repeat(8, 50px);
-            grid-template-rows: repeat(8, 50px);
-            gap: 2px;
-            justify-content: center;
-        }
-
-        .cell {
-            width: 50px;
-            height: 50px;
-            background: green;
-            position: relative;
-            cursor: pointer;
-        }
-
-            .cell:hover {
-                opacity: 0.8;
-            }
-
-        .piece {
-            width: 80%;
-            height: 80%;
-            border-radius: 50%;
-            position: absolute;
-            top: 10%;
-            left: 10%;
-        }
-
-        .black {
-            background: black;
-        }
-
-        .white {
-            background: white;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>黑白棋遊戲</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    #menu {
+      margin-bottom: 20px;
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 2px;
+      margin: 0 auto;
+      width: 80vh;    /* 自動依據視窗高度 90% */
+      height: 80vh;   /* 保持正方形 */
+    }
+    .cell {
+      background: green;
+      position: relative;
+      cursor: pointer;
+    }
+    .cell:hover {
+      opacity: 0.8;
+    }
+    .piece {
+      width: 80%;
+      height: 80%;
+      border-radius: 50%;
+      position: absolute;
+      top: 10%;
+      left: 10%;
+    }
+    .black {
+      background: black;
+    }
+    .white {
+      background: white;
+    }
+  </style>
 </head>
 <body>
-    <h1>黑白棋</h1>
-    <div id="menu">
-        <label>
-            <input type="radio" name="mode" value="pvp" checked> 2人對弈
-        </label>
-        <label>
-            <input type="radio" name="mode" value="pvC"> 電腦對弈
-        </label>
-        <button id="startBtn">開始遊戲</button>
-    </div>
-    <div id="board"></div>
+  <h1>黑白棋</h1>
+  <div id="menu">
+    <label>
+      <input type="radio" name="mode" value="pvp" checked> 2人對弈
+    </label>
+    <label>
+      <input type="radio" name="mode" value="pvC"> 電腦對弈
+    </label>
+    <button id="startBtn">開始遊戲</button>
+  </div>
+  <div id="board"></div>
 
-    <script>
+  <script>
     // 遊戲狀態
     let board = [];
     let currentPlayer = 'black'; // 黑子先行
@@ -112,7 +105,8 @@
 
     // 畫棋盤上的棋子
     function drawBoard() {
-      for (let cell of document.getElementsByClassName('cell')) {
+      const cells = document.getElementsByClassName('cell');
+      for (let cell of cells) {
         cell.innerHTML = '';
       }
       for (let r = 0; r < 8; r++) {
@@ -265,6 +259,6 @@
 
     // 初始化時先建立棋盤
     initBoard();
-    </script>
+  </script>
 </body>
 </html>
