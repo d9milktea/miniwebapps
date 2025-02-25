@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
   <meta charset="UTF-8">
   <title>黑白棋遊戲</title>
@@ -9,26 +10,33 @@
       text-align: center;
       margin: 20px;
     }
+
     #menu {
       margin-bottom: 20px;
     }
+
     #board {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
       grid-template-rows: repeat(8, 1fr);
       gap: 2px;
       margin: 0 auto;
-      width: min(85vw, 85vh);   /* 根據寬高較小的值 */
-      height: min(85vw, 85vh);  /* 保持正方形 */
+      width: min(85vw, 85vh);
+      /* 根據寬高較小的值 */
+      height: min(85vw, 85vh);
+      /* 保持正方形 */
     }
+
     .cell {
       background: green;
       position: relative;
       cursor: pointer;
     }
+
     .cell:hover {
       opacity: 0.8;
     }
+
     .piece {
       width: 80%;
       height: 80%;
@@ -37,14 +45,17 @@
       top: 10%;
       left: 10%;
     }
+
     .black {
       background: black;
     }
+
     .white {
       background: white;
     }
   </style>
 </head>
+
 <body>
   <h1>黑白棋</h1>
   <div id="menu">
@@ -56,6 +67,10 @@
     </label>
     <button id="startBtn">開始遊戲</button>
   </div>
+
+  <!-- 分數顯示區域 -->
+  <div id="scoreboard">黑棋：0 | 白棋：0</div>
+
   <div id="board"></div>
 
   <script>
@@ -66,18 +81,19 @@
 
     // 方向陣列，8 個方向
     const directions = [
-      {r: -1, c: 0},
-      {r: -1, c: 1},
-      {r: 0, c: 1},
-      {r: 1, c: 1},
-      {r: 1, c: 0},
-      {r: 1, c: -1},
-      {r: 0, c: -1},
-      {r: -1, c: -1}
+      { r: -1, c: 0 },
+      { r: -1, c: 1 },
+      { r: 0, c: 1 },
+      { r: 1, c: 1 },
+      { r: 1, c: 0 },
+      { r: 1, c: -1 },
+      { r: 0, c: -1 },
+      { r: -1, c: -1 }
     ];
 
     const boardEl = document.getElementById('board');
     const startBtn = document.getElementById('startBtn');
+    const scoreboardEl = document.getElementById('scoreboard');
 
     // 初始化棋盤
     function initBoard() {
@@ -120,6 +136,19 @@
           }
         }
       }
+      updateScore(); // 每次畫面重繪時更新分數
+    }
+
+    // 計算黑棋與白棋數量，並更新到 scoreboard
+    function updateScore() {
+      let blackCount = 0, whiteCount = 0;
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          if (board[r][c] === 'black') blackCount++;
+          else if (board[r][c] === 'white') whiteCount++;
+        }
+      }
+      scoreboardEl.textContent = `黑棋：${blackCount} | 白棋：${whiteCount}`;
     }
 
     // 檢查是否在棋盤範圍內
@@ -128,12 +157,12 @@
     }
 
     // 檢查某方向是否能夾到對手棋子
-    function checkDirection(r, c, dr, dc, player, flip=false) {
+    function checkDirection(r, c, dr, dc, player, flip = false) {
       let rCur = r + dr;
       let cCur = c + dc;
       let piecesToFlip = [];
       while (inBounds(rCur, cCur) && board[rCur][cCur] && board[rCur][cCur] !== player) {
-        piecesToFlip.push({r: rCur, c: cCur});
+        piecesToFlip.push({ r: rCur, c: cCur });
         rCur += dr;
         cCur += dc;
       }
@@ -161,7 +190,7 @@
                 break;
               }
             }
-            if (valid) moves.push({r, c});
+            if (valid) moves.push({ r, c });
           }
         }
       }
@@ -223,8 +252,9 @@
         const move = validMoves[Math.floor(Math.random() * validMoves.length)];
         makeMove(move.r, move.c, currentPlayer);
         drawBoard();
-        switchPlayer();
       }
+      // 不管有沒有落子，都要輪到下一位玩家或檢查是否結束
+      switchPlayer();
     }
 
     // 遊戲結束，計算雙方棋子數量
@@ -261,4 +291,5 @@
     initBoard();
   </script>
 </body>
+
 </html>
