@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>黑白棋遊戲</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #menu {
+            margin-bottom: 20px;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+            gap: 2px;
+            justify-content: center;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            background: green;
+            position: relative;
+            cursor: pointer;
+        }
+
+            .cell:hover {
+                opacity: 0.8;
+            }
+
+        .piece {
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            position: absolute;
+            top: 10%;
+            left: 10%;
+        }
+
+        .black {
+            background: black;
+        }
+
+        .white {
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>黑白棋</h1>
+    <div id="menu">
+        <label>
+            <input type="radio" name="mode" value="pvp" checked> 2人對弈
+        </label>
+        <label>
+            <input type="radio" name="mode" value="pvC"> 電腦對弈
+        </label>
+        <button id="startBtn">開始遊戲</button>
+    </div>
+    <div id="board"></div>
+
+    <script>
+    // 遊戲狀態
+    let board = [];
+    let currentPlayer = 'black'; // 黑子先行
+    let gameMode = 'pvp'; // 預設2人對弈
+
+    // 方向陣列，8 個方向
+    const directions = [
+      {r: -1, c: 0},
+      {r: -1, c: 1},
+      {r: 0, c: 1},
+      {r: 1, c: 1},
+      {r: 1, c: 0},
+      {r: 1, c: -1},
+      {r: 0, c: -1},
+      {r: -1, c: -1}
+    ];
+
+    const boardEl = document.getElementById('board');
+    const startBtn = document.getElementById('startBtn');
+
+    // 初始化棋盤
+    function initBoard() {
+      board = [];
+      boardEl.innerHTML = '';
+      for (let r = 0; r < 8; r++) {
+        board[r] = [];
+        for (let c = 0; c < 8; c++) {
+          board[r][c] = null;
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.addEventListener('click', onCellClick);
+          boardEl.appendChild(cell);
+        }
+      }
+      // 初始4個棋子
+      board[3][3] = 'white';
+      board[3][4] = 'black';
+      board[4][3] = 'black';
+      board[4][4] = 'white';
+      drawBoard();
+    }
+
+    // 畫棋盤上的棋子
+    function drawBoard() {
+      for (let cell of document.getElementsByClassName('cell')) {
+        cell.innerHTML = '';
+      }
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          if (board[r][c]) {
+            const piece = document.createElement('div');
+            piece.classList.add('piece');
+            piece.classList.add(board[r][c]);
+            const cell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+            cell.appendChild(piece);
+          }
+        }
+      }
+    }
+
+    // 檢查是否在棋盤範圍內
+    function inBounds(r, c) {
+      return r >= 0 && r < 8 && c >= 0 && c < 8;
+    }
+
+    // 檢查某方向是否能夾到對手棋子
+    function checkDirection(r, c, dr, dc, player, flip=false) {
+      let rCur = r + dr;
+      let cCur = c + dc;
+      let piecesToFlip = [];
+      while (inBounds(rCur, cCur) && board[rCur][cCur] && board[rCur][cCur] !== player) {
+        piecesToFlip.push({r: rCur, c: cCur});
+        rCur += dr;
+        cCur += dc;
+      }
+      if (inBounds(rCur, cCur) && board[rCur][cCur] === player && piecesToFlip.length > 0) {
+        if (flip) {
+          for (let pos of piecesToFlip) {
+            board[pos.r][pos.c] = player;
+          }
+        }
+        return piecesToFlip;
+      }
+      return [];
+    }
+
+    // 檢查所有方向是否合法
+    function getValidMoves(player) {
+      let moves = [];
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          if (!board[r][c]) {
+            let valid = false;
+            for (let dir of directions) {
+              if (checkDirection(r, c, dir.r, dir.c, player).length > 0) {
+                valid = true;
+                break;
+              }
+            }
+            if (valid) moves.push({r, c});
+          }
+        }
+      }
+      return moves;
+    }
+
+    // 處理棋盤點擊
+    function onCellClick(e) {
+      const r = parseInt(e.currentTarget.dataset.row);
+      const c = parseInt(e.currentTarget.dataset.col);
+      if (!isValidMove(r, c, currentPlayer)) return;
+      makeMove(r, c, currentPlayer);
+      drawBoard();
+      switchPlayer();
+      setTimeout(() => {
+        if (gameMode === 'pvC' && currentPlayer === 'white') {
+          computerMove();
+        }
+      }, 300);
+    }
+
+    // 判斷是否為合法著法
+    function isValidMove(r, c, player) {
+      if (board[r][c]) return false;
+      for (let dir of directions) {
+        if (checkDirection(r, c, dir.r, dir.c, player).length > 0) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // 落子並翻轉
+    function makeMove(r, c, player) {
+      board[r][c] = player;
+      for (let dir of directions) {
+        checkDirection(r, c, dir.r, dir.c, player, true);
+      }
+    }
+
+    // 輪換玩家，並檢查是否有合法著法
+    function switchPlayer() {
+      currentPlayer = (currentPlayer === 'black') ? 'white' : 'black';
+      let validMoves = getValidMoves(currentPlayer);
+      if (validMoves.length === 0) {
+        // 若對方無合法著法，則繼續由同一玩家下
+        currentPlayer = (currentPlayer === 'black') ? 'white' : 'black';
+        validMoves = getValidMoves(currentPlayer);
+        if (validMoves.length === 0) {
+          endGame();
+        }
+      }
+    }
+
+    // 電腦隨機選擇一個合法著法
+    function computerMove() {
+      let validMoves = getValidMoves(currentPlayer);
+      if (validMoves.length > 0) {
+        const move = validMoves[Math.floor(Math.random() * validMoves.length)];
+        makeMove(move.r, move.c, currentPlayer);
+        drawBoard();
+        switchPlayer();
+      }
+    }
+
+    // 遊戲結束，計算雙方棋子數量
+    function endGame() {
+      let blackCount = 0, whiteCount = 0;
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          if (board[r][c] === 'black') blackCount++;
+          else if (board[r][c] === 'white') whiteCount++;
+        }
+      }
+      let msg = `遊戲結束！黑子：${blackCount}，白子：${whiteCount}。`;
+      if (blackCount > whiteCount) msg += " 黑方獲勝！";
+      else if (whiteCount > blackCount) msg += " 白方獲勝！";
+      else msg += " 平局！";
+      alert(msg);
+    }
+
+    // 開始遊戲
+    startBtn.addEventListener('click', () => {
+      // 讀取遊戲模式
+      const modeRadios = document.getElementsByName('mode');
+      for (let radio of modeRadios) {
+        if (radio.checked) {
+          gameMode = radio.value;
+          break;
+        }
+      }
+      currentPlayer = 'black';
+      initBoard();
+    });
+
+    // 初始化時先建立棋盤
+    initBoard();
+    </script>
+</body>
+</html>
