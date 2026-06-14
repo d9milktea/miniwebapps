@@ -1,0 +1,589 @@
+/* Theme tokens shared across the toy board, pieces, blockers, and page chrome. */
+
+:root {
+  --page-bg: #f6f6f4;
+  --text-main: #20252b;
+  --board-base: #ec3f54;
+  --board-deep: #c72238;
+  --board-rim: #ff6479;
+  --track-hole: #151515;
+  --track-hole-edge: #060606;
+  --track-shadow: rgba(0, 0, 0, 0.38);
+  --piece-base: #3f95f3;
+  --piece-dark: #1c5fb2;
+  --piece-light: #79b8ff;
+  --piece-home-fill: rgba(255, 255, 255, 0.02);
+  --piece-home-stroke: rgba(0, 0, 0, 0);
+  --blocker-base: #ffffff;
+  --blocker-dark: #d0d4d8;
+  --blocker-light: #ffffff;
+  --blocker-label: #20252b;
+  --cell-size: 64px;
+}
+
+/* Global page sizing, overflow control, and base background treatment. */
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.82), transparent 28%),
+    linear-gradient(180deg, #ffffff, var(--page-bg));
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* App shell and top utility layout. */
+
+.toy-app {
+  position: relative;
+  width: min(980px, calc(100% - 20px));
+  height: 100svh;
+  margin: 0 auto;
+  padding: 12px 0 16px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+}
+
+.utility-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Color palette controls and top status chips. */
+
+.palette-strip,
+.progress-chip,
+.reset-chip,
+.piece-toolbar {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 24px rgba(51, 60, 75, 0.12);
+}
+
+.palette-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 22px;
+}
+
+.swatch-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 16px;
+  background: rgba(247, 247, 245, 0.94);
+}
+
+.swatch-label {
+  min-width: 24px;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.swatch-row {
+  display: flex;
+  gap: 6px;
+}
+
+.swatch-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 1px rgba(32, 37, 43, 0.12);
+  background: var(--swatch-color);
+  cursor: pointer;
+}
+
+.swatch-button-small {
+  width: 24px;
+  height: 24px;
+}
+
+.swatch-button.is-active {
+  box-shadow: 0 0 0 3px rgba(32, 37, 43, 0.22);
+}
+
+.swatch-button[data-color="#ec3f54"] {
+  --swatch-color: #ec3f54;
+}
+
+.swatch-button[data-color="#3f95f3"] {
+  --swatch-color: #3f95f3;
+}
+
+.swatch-button[data-color="#f4cc2f"] {
+  --swatch-color: #f4cc2f;
+}
+
+.swatch-button[data-color="#ff972f"] {
+  --swatch-color: #ff972f;
+}
+
+.swatch-button[data-color="#ffffff"] {
+  --swatch-color: #ffffff;
+}
+
+.swatch-button[data-color="#111111"] {
+  --swatch-color: #111111;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-chip {
+  min-width: 84px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.progress-chip.is-done {
+  background: linear-gradient(180deg, #e6ffe8, #c8f7d2);
+  color: #0c7a2e;
+}
+
+.reset-chip {
+  appearance: none;
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 800;
+  color: #262b30;
+  cursor: pointer;
+}
+
+/* Main playfield shell and invisible tray anchors around the centered board. */
+
+.playfield {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.piece-homes,
+.board-shell {
+  position: absolute;
+  inset: 0;
+}
+
+.piece-home {
+  position: absolute;
+  width: 88px;
+  height: 88px;
+  opacity: 0;
+}
+
+.dock-0 {
+  top: 8%;
+  left: 8%;
+}
+
+.dock-1 {
+  top: 8%;
+  right: 8%;
+}
+
+.dock-2 {
+  top: 50%;
+  right: 4%;
+  transform: translateY(-50%);
+}
+
+.dock-3 {
+  bottom: 8%;
+  right: 8%;
+}
+
+.dock-4 {
+  bottom: 8%;
+  left: 8%;
+}
+
+.dock-5 {
+  top: 50%;
+  left: 4%;
+  transform: translateY(-50%);
+}
+
+/* Center board, decorative shell, rail lines, and peg holes. */
+
+.board-shell {
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.board {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: min(42vw, min(72svh, 390px));
+  aspect-ratio: 1;
+  padding: clamp(12px, 1.8vw, 15px);
+  border-radius: 28px;
+  background: linear-gradient(180deg, var(--board-rim), var(--board-base) 18%, var(--board-deep));
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -10px 18px rgba(85, 8, 22, 0.28),
+    0 20px 28px rgba(28, 34, 39, 0.24);
+}
+
+.board-tracks {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.board-track-line {
+  stroke: rgba(12, 12, 12, 0.92);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.06));
+  opacity: 0.98;
+}
+
+.board::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 22px;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.12),
+    inset 0 0 0 8px rgba(148, 0, 18, 0.08);
+}
+
+.board-cell {
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+}
+
+.board-hole {
+  position: absolute;
+  background: linear-gradient(180deg, var(--track-hole-edge), var(--track-hole));
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.03),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.72),
+    0 1px 0 rgba(255, 255, 255, 0.04);
+  width: 64%;
+  height: 64%;
+  top: 18%;
+  left: 18%;
+  border-radius: 50%;
+}
+
+.board-cell.blocker-cell .board-hole {
+  opacity: 0.6;
+}
+
+/* Global drag layer plus movable piece and blocker visuals. */
+
+.drag-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+}
+
+.piece,
+.blocker {
+  position: fixed;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+}
+
+.piece {
+  pointer-events: none;
+  cursor: grab;
+  transition: filter 160ms ease, left 140ms ease, top 140ms ease;
+}
+
+.piece.dragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+.piece.selected {
+  filter: drop-shadow(0 12px 18px rgba(52, 86, 140, 0.26));
+}
+
+.piece-link,
+.piece-bead {
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  background: linear-gradient(180deg, var(--piece-light), var(--piece-base) 70%, var(--piece-dark));
+}
+
+.piece-link {
+  position: absolute;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.piece-link.horizontal,
+.piece-link.vertical {
+  border-radius: 999px;
+}
+
+.piece-bead {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.34), 0 8px 12px rgba(153, 43, 70, 0.2);
+}
+
+.piece-badge {
+  display: none;
+}
+
+.blocker {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--blocker-label);
+  background: linear-gradient(180deg, var(--blocker-light), var(--blocker-base) 62%, var(--blocker-dark));
+  border: 3px solid rgba(33, 51, 64, 0.14);
+  cursor: grab;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.8), 0 10px 16px rgba(84, 102, 118, 0.22);
+}
+
+.blocker.dragging {
+  cursor: grabbing;
+}
+
+.blocker.region-a {
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.8), 0 8px 16px rgba(64, 70, 75, 0.24);
+}
+
+.blocker.region-b {
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.8), 0 8px 16px rgba(64, 70, 75, 0.24);
+}
+
+.blocker.region-c {
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.8), 0 8px 16px rgba(64, 70, 75, 0.24);
+}
+
+/* Floating action toolbar shown beside the currently selected piece. */
+
+.piece-toolbar {
+  position: fixed;
+  z-index: 80;
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 18px;
+  min-width: 188px;
+}
+
+.piece-toolbar.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.piece-toolbar-label {
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.piece-toolbar-actions {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.tool-button {
+  appearance: none;
+  border: 0;
+  min-height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f4f6f8, #e9edf1);
+  color: #232a31;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.tool-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tool-button-secondary {
+  background: linear-gradient(180deg, #fff1de, #f8e0bb);
+}
+
+/* Visually hidden accessibility helper text. */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive sizing adjustments for tablet and mobile screens. */
+
+@media (max-width: 820px) {
+  .board {
+    width: min(52vw, min(60svh, 330px));
+  }
+}
+
+@media (max-width: 560px) {
+  .toy-app {
+    width: min(100% - 12px, 980px);
+    padding-top: 8px;
+  }
+
+  .playfield {
+    padding: 16px 0;
+  }
+
+  .utility-bar {
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .palette-strip {
+    padding: 7px 8px;
+    gap: 8px;
+  }
+
+  .swatch-group {
+    padding: 4px;
+    gap: 6px;
+  }
+
+  .board {
+    width: min(50vw, min(42svh, 240px));
+  }
+
+  .piece-home {
+    width: 78px;
+    height: 78px;
+  }
+
+  .dock-0,
+  .dock-1,
+  .dock-2,
+  .dock-3,
+  .dock-4,
+  .dock-5 {
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    transform: translateX(-50%);
+  }
+
+  .dock-0 {
+    top: 6%;
+    left: 18%;
+  }
+
+  .dock-1 {
+    top: 4%;
+    left: 50%;
+  }
+
+  .dock-2 {
+    top: 6%;
+    left: 82%;
+  }
+
+  .dock-3 {
+    bottom: 6%;
+    left: 18%;
+  }
+
+  .dock-4 {
+    bottom: 4%;
+    left: 50%;
+  }
+
+  .dock-5 {
+    bottom: 6%;
+    left: 82%;
+  }
+
+  .piece-toolbar {
+    min-width: 170px;
+    padding: 8px;
+  }
+
+  .piece-toolbar-actions {
+    gap: 4px;
+  }
+
+  .tool-button {
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 420px) {
+  .board {
+    width: min(46vw, min(38svh, 216px));
+  }
+
+  .piece-home {
+    width: 72px;
+    height: 72px;
+  }
+
+  .dock-0,
+  .dock-3 {
+    left: 16%;
+  }
+
+  .dock-2,
+  .dock-5 {
+    left: 84%;
+  }
+}

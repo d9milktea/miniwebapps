@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IQ Mini Prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="toy-app">
+      <header class="utility-bar">
+        <div class="palette-strip" aria-label="顏色設定">
+          <div class="swatch-group" data-target="board">
+            <span class="swatch-label">板</span>
+            <div class="swatch-row">
+              <button class="swatch-button" type="button" data-theme-target="board" data-color="#ec3f54" aria-label="紅色棋盤"></button>
+              <button class="swatch-button" type="button" data-theme-target="board" data-color="#3f95f3" aria-label="藍色棋盤"></button>
+              <button class="swatch-button" type="button" data-theme-target="board" data-color="#f4cc2f" aria-label="黃色棋盤"></button>
+              <button class="swatch-button" type="button" data-theme-target="board" data-color="#ff972f" aria-label="橘色棋盤"></button>
+            </div>
+          </div>
+
+          <div class="swatch-group" data-target="pieces">
+            <span class="swatch-label">塊</span>
+            <div class="swatch-row">
+              <button class="swatch-button" type="button" data-theme-target="pieces" data-color="#ec3f54" aria-label="紅色拼塊"></button>
+              <button class="swatch-button" type="button" data-theme-target="pieces" data-color="#3f95f3" aria-label="藍色拼塊"></button>
+              <button class="swatch-button" type="button" data-theme-target="pieces" data-color="#f4cc2f" aria-label="黃色拼塊"></button>
+              <button class="swatch-button" type="button" data-theme-target="pieces" data-color="#ff972f" aria-label="橘色拼塊"></button>
+            </div>
+          </div>
+
+          <div class="swatch-group" data-target="blockers">
+            <span class="swatch-label">點</span>
+            <div class="swatch-row">
+              <button class="swatch-button swatch-button-small" type="button" data-theme-target="blockers" data-color="#ffffff" aria-label="白色 blocker"></button>
+              <button class="swatch-button swatch-button-small" type="button" data-theme-target="blockers" data-color="#111111" aria-label="黑色 blocker"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button id="resetAllBtn" class="reset-chip" type="button">重來</button>
+          <div id="filledCount" class="progress-chip">3 / 25</div>
+        </div>
+      </header>
+
+      <main id="playfield" class="playfield">
+        <div id="pieceHomes" class="piece-homes" aria-hidden="true"></div>
+
+        <div class="board-shell">
+          <div id="board" class="board" aria-label="IQ Mini 棋盤"></div>
+        </div>
+      </main>
+
+      <div id="pieceToolbar" class="piece-toolbar is-hidden">
+        <div id="selectedPieceName" class="piece-toolbar-label">選一塊</div>
+        <div class="piece-toolbar-actions">
+          <button id="rotateLeftBtn" class="tool-button" type="button" aria-label="左轉 90 度">↶</button>
+          <button id="rotateRightBtn" class="tool-button" type="button" aria-label="右轉 90 度">↷</button>
+          <button id="rotateHalfBtn" class="tool-button" type="button" aria-label="旋轉 180 度">180</button>
+          <button id="flipBtn" class="tool-button" type="button" aria-label="水平翻面">⇋</button>
+          <button id="returnSelectedBtn" class="tool-button tool-button-secondary" type="button" aria-label="收回拼塊">↩</button>
+        </div>
+      </div>
+
+      <p id="statusText" class="sr-only" aria-live="polite"></p>
+    </div>
+
+    <div id="dragLayer" class="drag-layer" aria-hidden="true"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
